@@ -1,0 +1,89 @@
+:root {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    max-width: 100%;
+    --margin-left: 40px;
+    --header-height: 40px;
+    --primary-color: #4B86B4;
+    --white-color: #fff;
+    --black-color: #000;
+    --text-color: #333;
+    --border-color: #dbdbdb;
+    --mainmenu-width: calc(98% - var(--submenu-width));
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.html {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.header {
+    position: fixed;
+    height: var(--header-height);
+    top: 0%;
+    left: 0;
+    right: 0%;
+    z-index: 100;
+    max-width: 100%;
+}
+
+.body {
+    width: 100%;
+    margin-top: var(--header-height);
+}
+
+
+/* Preloader */
+
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999999;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.preloader-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.preloader-icon {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+    padding: 0px;
+}
+
+.preloader-icon span {
+    position: absolute;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    background: #F7941D;
+    -webkit-animation: preloader-fx 1.6s linear infinite;
+    animation: preloader-fx 1.6s linear infinite;
+}
+
+.preloader-icon span:last-child {
+    animation-delay: -0.8s;
+    -webkit-animation-delay: -0.8s;
+}
+
+
+/* End Preloader */

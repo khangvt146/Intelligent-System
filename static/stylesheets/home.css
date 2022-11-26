@@ -1,0 +1,61 @@
+.title {
+    font-size: 30pt;
+    font-weight: 700;
+    line-height: 35pt;
+    color: #3DA4AB;
+}
+
+.content {
+    top: 30%;
+    left: 10%;
+    width: 45%;
+    position: absolute;
+}
+
+.information {
+    padding: 30px 0;
+    font-size: 20pt;
+}
+
+.home_img {
+    width: 35%;
+    height: auto;
+    float: right;
+    top: 25%;
+    right: 8%;
+    position: absolute;
+}
+
+.decorator_1 {
+    width: 350px;
+    height: 220px;
+    position: absolute;
+    top: 60px;
+    left: 00px;
+}
+
+.decorator_2 {
+    width: 350px;
+    height: 200px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    transform: rotate(180deg);
+}
+
+.btn-primary {
+    background: #3DA4AB;
+    border-style: none;
+    font-weight: 600;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+.btn-block {
+    width: 30%;
+    margin: 0 auto;
+}
+
+#use_button {
+    width: 30%;
+}

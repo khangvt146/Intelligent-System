@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="content"> 
+        <div class="title">
+            Nhận dạng ngôn ngữ ký hiệu thông qua cử chỉ tay
+        </div>
+        <div class="information">
+            Hệ thống cung cấp ứng dụng chuyển đổi chuỗi cử chỉ tay sang kí tự thông thường theo thời gian thực để quá trình giao tiếp giữa người bình thường và người khiếm thính dễ dàng hơn.
+        </div>
+        <div class="use_button" align="center">
+        <button
+            class="subscribe btn btn-primary btn-block shadow-sm" id="use_button" onclick="location.href='/application'">
+             Sử dụng <i class="fa-solid fa-angles-right ml-1"></i>
+        </button>
+        </div>
+    </div>
+
+    <img src="{{ url_for('static', filename='img/asl_alphabel.png')}}" alt="" class="home_img">
+    
+
+{% endblock %}

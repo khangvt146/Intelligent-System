@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class='app-layout container-fluid'>
+        <div class="row">
+            <div class="col-lg-7">
+                <img src="{{ url_for('static', filename='img/webcam.png')}}" alt="" class="webcam_img">
+            </div>
+
+            <div class="col-lg-5">
+                <div class="row">
+                    <div class="col col-lg-6"><div id="display_rec_1">A</div></div>
+                    <div class="col col-lg-6"><div id="display_rec_2"></div></div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col col-lg-12"><div id="display_text">ABC</div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-7">
+                <button
+                class="subscribe btn btn-primary btn-block shadow-sm" id="start_button">
+                <i class="fa-solid fa-play ml-2"></i> Bắt đầu 
+                </button>
+
+                <button
+                class="subscribe btn btn-primary btn-block shadow-sm" id="pause_button">
+                <i class="fa-solid fa-pause ml-2"></i> Dừng
+                </button>
+            </div>
+
+            <div class="col-lg-5" align="center">
+                <button
+                class="subscribe btn btn-primary btn-block shadow-sm" id="save_button">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu văn bản
+                </button>
+            </div>
+        </div>
+
+        
+</div>
+
+    <div class='row'>
+        Button row
+    </div>
+</div>
+
+{% endblock %}
