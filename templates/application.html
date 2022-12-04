@@ -4,16 +4,23 @@
 <div class='app-layout container-fluid'>
         <div class="row">
             <div class="col-lg-7">
-                <img src="{{ url_for('static', filename='img/webcam.png')}}" alt="" class="webcam_img">
+                <img src="{{ url_for('video') }}" alt="" class="webcam_img" style="width:600px;height:400px;">
             </div>
 
             <div class="col-lg-5">
                 <div class="row">
-                    <div class="col col-lg-6"><div id="display_rec_1">A</div></div>
-                    <div class="col col-lg-6"><div id="display_rec_2"></div></div>
+
+                    <div class="col col-lg-6"><div id="display_rec_1">
+                        {{label_predict}}
+                    </div></div>
+
+                    <div class="col col-lg-6"><div id="display_rec_2">
+                        <img src="{{ url_for('static', filename=path_gester) }}" alt="" class="gesture_img" style="width:170px;height:160px;">
+                    </div></div>
+
                 </div>
                 <div class="row mt-5">
-                    <div class="col col-lg-12"><div id="display_text">ABC</div></div>
+                    <div class="col col-lg-12"><div id="display_text">{{buffer}}</div></div>
                 </div>
             </div>
 
@@ -21,26 +28,33 @@
 
         <div class="row mt-4">
             <div class="col-lg-7">
+                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="start_button">
-                <i class="fa-solid fa-play ml-2"></i> Bắt đầu 
+                class="subscribe btn btn-primary btn-block shadow-sm" id="start_button" name="start_button" type='submit'>
+                <i class="fa-solid fa-play ml-2"></i> Bắt đầu
                 </button>
+                </form>
 
+                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="pause_button">
+                class="subscribe btn btn-primary btn-block shadow-sm" id="pause_button" name="pause_button" type='submit'>
                 <i class="fa-solid fa-pause ml-2"></i> Dừng
                 </button>
+                </form>
+
             </div>
 
             <div class="col-lg-5" align="center">
+                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="save_button">
+                class="subscribe btn btn-primary btn-block shadow-sm" id="save_button" name="save_button" type='submit'>
                 <i class="fa-solid fa-floppy-disk"></i> Lưu văn bản
                 </button>
+                </form>
             </div>
         </div>
 
-        
+
 </div>
 
     <div class='row'>
