@@ -1,25 +1,36 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 import keras
 import cv2
 import numpy as np
-
+import json
 app = Flask(__name__, template_folder='templates')
 
 import cv2
 
 camera = cv2.VideoCapture(0)
-
-global buffer_text
-buffer_text = ''
-
+global start_button
+start_button = False
+global save_button
+save_button = False
 
 def generate_frames():
-    while True:
-
+    i = 0
+    global start_button
+    while start_button:
+        i += 1
         ## read the camera frame
         success,frame=camera.read()
         temp = frame[150:350, 50:250]
         cv2.rectangle(frame, pt1=(50,150), pt2=(250,350), color=(0,255,0), thickness=10)
+        with open("static/data/log.json", "r") as jsonFile:
+            data = json.load(jsonFile)
+
+        data["predict_label"] = str(i)
+        data["predict_prob"] = str(i/10000)
+        data["buffer_text"] += str(i)
+
+        with open("static/data/log.json", "w") as jsonFile:
+            json.dump(data, jsonFile)
 
         if not success:
             break
@@ -37,36 +48,53 @@ def generate_frames():
 def video():
     return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/get_predict', methods = ['GET'])
+def get_predict():
+     with open("static/data/log.json", "r") as jsonFile:
+            data = json.load(jsonFile)
+     return jsonify({'predict_label': data["predict_label"],'predict_prob': data["predict_prob"], 'buffer_label': data["buffer_text"]})
+
 
 @app.route('/')
 def render_home():
     return render_template('home.html')
 
+@app.route('/start_button', methods=['POST', 'GET'])
+def toggle_start_button():
+    global start_button
+    global save_button
+    start_button = True
+    save_button = False
+    return render_template('application.html')
 
-@app.route('/application', methods=['POST', 'GET'])
+@app.route('/stop_button', methods=['POST', 'GET'])
+def toggle_stop_button():
+    global start_button
+    global save_button
+    start_button = False
+    save_button = False
+    return render_template('application.html')
+
+@app.route('/save_button', methods=['POST', 'GET'])
+def toggle_save_button():
+    with open("static/data/log.json", "r") as jsonFile:
+                data = json.load(jsonFile)
+
+    data["predict_label"] = ""
+    data["predict_prob"] = ""
+    data["buffer_text"] = ""
+
+    with open("static/data/log.json", "w") as jsonFile:
+        json.dump(data, jsonFile)
+    global start_button
+    global save_button
+    save_button = True
+    start_button =False
+    return render_template('application.html')
+
+@app.route('/application')
 def render_application():
-    global buffer_text
-    if request.method == 'POST':
-        print('test post')
-        if 'start_button' in request.form:
-            path_image = r'img/webcam.png'
-            path_gester = r'data/crop.jpg'
-            # label_predict =  predict('static/'+path_gester)
-            label_predict = 'A'
-            buffer_text += label_predict
-            return render_template('application.html', path_image = path_image , buffer = buffer_text, label_predict = label_predict, path_gester = path_gester)
-        elif 'pause_button' in request.form:
-            path_image = ''
-            path_gester = ''
-            # label_predict =  predict('static/'+path_gester)
-            label_predict = 'B'
-            buffer_text += label_predict
-            return render_template('application.html', path_image = path_image , buffer = buffer_text, label_predict = label_predict, path_gester = path_gester)
-        else:
-            buffer_text = ''
-            return render_template('application.html')
-    else:
-        return render_template('application.html')
+    return render_template('application.html')
 
 @app.route('/contact')
 def render_contact():

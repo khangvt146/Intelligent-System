@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<script type="text/javascript">
+    var intervalID = setInterval(update_values,1);
+
+    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+      function update_values() {
+            $.getJSON($SCRIPT_ROOT + '/get_predict',
+
+          function(data) {
+            $('#predict_label').text(data.predict_label);
+            $('#predict_prob').text(data.predict_prob);
+            $('#buffer_label').text(data.buffer_label);
+          });
+
+        };
+
+</script>
+<body onload="update_values();">
+
 <div class='app-layout container-fluid'>
         <div class="row">
             <div class="col-lg-7">
@@ -11,16 +30,27 @@
                 <div class="row">
 
                     <div class="col col-lg-6"><div id="display_rec_1">
-                        {{label_predict}}
+                        <span id="predict_label">?</span>
+                        <script>
+                            document.getElementById("predict_label").innerHTML;
+                        </script>
                     </div></div>
 
                     <div class="col col-lg-6"><div id="display_rec_2">
-                        <img src="{{ url_for('static', filename=path_gester) }}" alt="" class="gesture_img" style="width:170px;height:160px;">
+                        <span id="predict_prob">?</span>
+                        <script>
+                            document.getElementById("predict_prob").innerHTML;
+                        </script>
                     </div></div>
 
                 </div>
                 <div class="row mt-5">
-                    <div class="col col-lg-12"><div id="display_text">{{buffer}}</div></div>
+                    <div class="col col-lg-12"><div id="display_text">
+                        <span id="buffer_label">?</span>
+                        <script>
+                            document.getElementById("buffer_label").innerHTML;
+                        </script>
+                    </div></div>
                 </div>
             </div>
 
@@ -28,29 +58,23 @@
 
         <div class="row mt-4">
             <div class="col-lg-7">
-                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="start_button" name="start_button" type='submit'>
+                class="subscribe btn btn-primary btn-block shadow-sm" id="start_button" name="start_button" type='submit'  onclick="location.href='/start_button'">
                 <i class="fa-solid fa-play ml-2"></i> Bắt đầu
                 </button>
-                </form>
 
-                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="pause_button" name="pause_button" type='submit'>
+                class="subscribe btn btn-primary btn-block shadow-sm" id="pause_button" name="pause_button" type='submit'  onclick="location.href='/stop_button'">
                 <i class="fa-solid fa-pause ml-2"></i> Dừng
                 </button>
-                </form>
 
             </div>
 
             <div class="col-lg-5" align="center">
-                <form method="POST">
                 <button
-                class="subscribe btn btn-primary btn-block shadow-sm" id="save_button" name="save_button" type='submit'>
+                class="subscribe btn btn-primary btn-block shadow-sm" id="save_button" name="save_button" type='submit'  onclick="location.href='/save_button'">
                 <i class="fa-solid fa-floppy-disk"></i> Lưu văn bản
                 </button>
-                </form>
             </div>
         </div>
 
@@ -61,5 +85,5 @@
         Button row
     </div>
 </div>
-
+</body>
 {% endblock %}
