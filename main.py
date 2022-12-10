@@ -1,10 +1,9 @@
-from flask import Flask, render_template, request, Response, jsonify
+from flask import Flask, render_template, request, Response, jsonify, send_file, after_this_request
 import keras
 import cv2
 import numpy as np
 import json
 from keras.layers import *
-from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
 
 
@@ -25,36 +24,38 @@ def generate_frames():
     i = 0
     global start_button
     while start_button:
-        i += 1
-        if not i % 30: continue
-
+        
         ## read the camera frame
         success,frame=camera.read()
+        i += 1
+    
+      
         frame = cv2.flip(frame,1)
         if not success:
             print('FAILED')
             break
         temp = frame[150:350, 50:250].copy()
         cv2.rectangle(frame, pt1=(50,150), pt2=(250,350), color=(0,255,0), thickness=10)
-        with open("static/data/log.json", "r") as jsonFile:
-            data = json.load(jsonFile)
 
-        cv2.imwrite('static/data/crop2.jpg', temp)
+        if (i % 60 == 0):
+            with open("static/data/log.json", "r") as jsonFile:
+                data = json.load(jsonFile)
+            print(i)
 
-        temp = cv2.resize(temp, (64, 64))
-        temp = temp[...,::-1].astype(np.float32)
+            temp = cv2.resize(temp, (64, 64))
+            temp = temp[...,::-1].astype(np.float32)
 
-        data["predict_label"],data["predict_prob"] = predict(temp)
+            data["predict_label"],data["predict_prob"] = predict(temp)
 
-        data["buffer_text"] += data["predict_label"]
-        print(data)
-        with open("static/data/log.json", "w") as jsonFile:
-            json.dump(data, jsonFile)
-
+            data["buffer_text"] += data["predict_label"]
+            print(data)
+            with open("static/data/log.json", "w") as jsonFile:
+                json.dump(data, jsonFile)
+           
         if not success:
             break
         else:
-            cv2.imwrite('static/data/crop.jpg', temp)
+            # cv2.imwrite('static/data/crop.jpg', temp)
 
             ret,buffer=cv2.imencode('.jpg',frame)
             frame=buffer.tobytes()
@@ -71,7 +72,7 @@ def video():
 def get_predict():
      with open("static/data/log.json", "r") as jsonFile:
             data = json.load(jsonFile)
-     return jsonify({'predict_label': data["predict_label"],'predict_prob': data["predict_prob"], 'buffer_label': data["buffer_text"]})
+     return jsonify({'predict_label': data["predict_label"],'predict_prob': data["predict_prob"], 'buffer_label': data["buffer_text"][-10:]})
 
 
 @app.route('/')
@@ -97,8 +98,11 @@ def toggle_stop_button():
 @app.route('/save_button', methods=['POST', 'GET'])
 def toggle_save_button():
     with open("static/data/log.json", "r") as jsonFile:
-                data = json.load(jsonFile)
+        data = json.load(jsonFile)
 
+    with open("static/data/output.txt", "w") as text_file:
+        text_file.write(data["buffer_text"])
+     
     data["predict_label"] = ""
     data["predict_prob"] = ""
     data["buffer_text"] = ""
@@ -109,10 +113,20 @@ def toggle_save_button():
     global save_button
     save_button = True
     start_button =False
-    return render_template('application.html')
+
+    return send_file("static/data/output.txt", as_attachment=True)
 
 @app.route('/application')
 def render_application():
+    with open("static/data/log.json", "r") as jsonFile:
+        data = json.load(jsonFile)
+    
+    data["predict_label"] = ""
+    data["predict_prob"] = ""
+    data["buffer_text"] = ""
+
+    with open("static/data/log.json", "w") as jsonFile:
+        json.dump(data, jsonFile)
     return render_template('application.html')
 
 @app.route('/contact')
@@ -123,9 +137,9 @@ def render_contact():
 def predict(img):
     input_arr = np.array([img])
     predict = model.predict(input_arr)
-    prob = np.max(predict)
-    if prob <0.8:
-        return '',''
+    prob = round(np.max(predict),2)
+    if prob <0.7:
+        return '',str(prob)
 
     result = labels_dict[str(np.argmax(predict))]
     return result, str(prob)
