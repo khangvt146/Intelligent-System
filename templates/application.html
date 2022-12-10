@@ -3,7 +3,7 @@
 {% block content %}
 
 <script type="text/javascript">
-    var intervalID = setInterval(update_values,1);
+    var intervalID = setInterval(update_values,100);
 
     var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
       function update_values() {

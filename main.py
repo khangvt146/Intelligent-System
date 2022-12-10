@@ -23,6 +23,9 @@ def generate_frames():
         i += 1
         ## read the camera frame
         success,frame=camera.read()
+        if not success:
+            print('FAILED')
+            break
         temp = frame[150:350, 50:250]
         cv2.rectangle(frame, pt1=(50,150), pt2=(250,350), color=(0,255,0), thickness=10)
         with open("static/data/log.json", "r") as jsonFile:
@@ -107,8 +110,8 @@ def render_contact():
 
 def predict(img):
     size = 64,64
-    temp = cv2.imread(img)
-    temp = cv2.resize(temp, size)
+    # temp = cv2.imread(img)
+    temp = cv2.resize(img, size)
     img = temp.astype('float32')/255.0
 
     prediction= np.argmax(model.predict(img.reshape(1,64,64,3))[0])
@@ -116,4 +119,4 @@ def predict(img):
 
 
 
-app.run(host="", port=3000, debug=True, use_reloader=True)
+app.run(host="", port=3000, debug=True, use_reloader=False)
