@@ -3,6 +3,11 @@ import keras
 import cv2
 import numpy as np
 import json
+from keras.layers import *
+from keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
+
+
 app = Flask(__name__, template_folder='templates')
 
 import cv2
@@ -21,19 +26,26 @@ def generate_frames():
     global start_button
     while start_button:
         i += 1
+        if not i % 30: continue
+
         ## read the camera frame
         success,frame=camera.read()
+        frame = cv2.flip(frame,1)
         if not success:
             print('FAILED')
             break
-        temp = frame[150:350, 50:250]
+        temp = frame[150:350, 50:250].copy()
         cv2.rectangle(frame, pt1=(50,150), pt2=(250,350), color=(0,255,0), thickness=10)
         with open("static/data/log.json", "r") as jsonFile:
             data = json.load(jsonFile)
 
-        
+        cv2.imwrite('static/data/crop2.jpg', temp)
+
+        temp = cv2.resize(temp, (64, 64))
+        temp = temp[...,::-1].astype(np.float32)
+
         data["predict_label"],data["predict_prob"] = predict(temp)
-        # data["predict_prob"] = '1'
+
         data["buffer_text"] += data["predict_label"]
         print(data)
         with open("static/data/log.json", "w") as jsonFile:
@@ -109,14 +121,14 @@ def render_contact():
 
 
 def predict(img):
-    size = 64,64
-
-    temp = cv2.resize(img, size)
-    img = temp.astype('float32')/255.0
-    predict = model.predict(img.reshape(1,64,64,3))[0]
+    input_arr = np.array([img])
+    predict = model.predict(input_arr)
     prob = np.max(predict)
-    prediction= np.argmax(predict)
-    return labels_dict[str(prediction)], str(round(prob, 2))
+    if prob <0.8:
+        return '',''
+
+    result = labels_dict[str(np.argmax(predict))]
+    return result, str(prob)
 
 
 
