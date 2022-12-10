@@ -3,3 +3,5 @@ Lib/
 Scripts/
 data/asl_alphabet_train
 data/asl_alphabet_test
+funix.ipynb
+model2.h5
